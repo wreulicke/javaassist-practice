@@ -1,11 +1,15 @@
 package wreulicke.test;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.BiFunction;
 
 import org.junit.Test;
 
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.NotFoundException;
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -27,7 +31,7 @@ public class ProxyTest {
   }
 
   @Test
-  public void testExampleClass() throws InstantiationException, IllegalAccessException {
+  public void testExampleClass() throws InstantiationException, IllegalAccessException, IOException, NotFoundException, CannotCompileException {
     ProxyFactory factory = new ProxyFactory();
     factory.setSuperclass(Example.class);
     factory.setFilter(new MethodFilter() {
@@ -65,15 +69,21 @@ public class ProxyTest {
   
   /**
    * めちゃシンプルなケース
+   * @throws NotFoundException 
+   * @throws ClassNotFoundException 
    */
   @Test
-  public void testSimpleCreate() throws NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException{
+  public void testSimpleCreate() throws NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, NotFoundException, ClassNotFoundException{
+    ClassPool.getDefault();
     ProxyFactory factory=new ProxyFactory();
     factory.setSuperclass(Example.class);
     Example example=(Example) factory.create(new Class[0],new Object[0], (self,m,p,args)->{
       System.out.println(m);
       return p.invoke(self, args);
     });
+    System.out.println(Example.class.getClassLoader());
+    System.out.println(example.getClass().getClassLoader());
+    System.out.println(ClassPool.getDefault().getClassLoader());
     example.test();
   }
 
