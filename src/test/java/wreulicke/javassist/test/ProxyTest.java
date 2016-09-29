@@ -1,4 +1,4 @@
-package wreulicke.test;
+package wreulicke.javassist.test;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

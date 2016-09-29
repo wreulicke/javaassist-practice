@@ -1,4 +1,4 @@
-package wreulicke.test;
+package wreulicke.javassist.test;
 
 import static org.junit.Assert.fail;
 
@@ -15,6 +15,7 @@ public class GetterCreateTest {
    * 普通に元からあるクラスを拡張してみる（loadもwriteもしてないのでクラスファイルはそのまま）
    * @throws Exception
    */
+  
   @Test
   public void test() throws Exception{
     ClassPool pool=ClassPool.getDefault();
