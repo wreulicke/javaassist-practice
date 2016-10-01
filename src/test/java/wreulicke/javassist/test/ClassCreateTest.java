@@ -232,6 +232,7 @@ public class ClassCreateTest {
 
   /**
    * ジェネリックなメソッド生成2 こいつは無理
+   * 
    * @throw AssersionError
    */
   @Test
@@ -243,7 +244,7 @@ public class ClassCreateTest {
     ClassType type = new ClassType(Map.class.getName(), new TypeArgument[] {
         new TypeArgument(new ClassType(String.class.getName())),
         new TypeArgument(new ClassType(Integer.class.getName()))});
-    TypeParameter parameter = new TypeParameter("T", null, new ObjectType[]{type, new ClassType(Cloneable.class.getName())});
+    TypeParameter parameter = new TypeParameter("T", null, new ObjectType[] {type, new ClassType(Cloneable.class.getName())});
     TypeVariable variable = new SignatureAttribute.TypeVariable("T");
     MethodSignature signature = new MethodSignature(new SignatureAttribute.TypeParameter[] {parameter}, new SignatureAttribute.Type[] {
         variable,
@@ -261,19 +262,21 @@ public class ClassCreateTest {
     Files.deleteIfExists(clazzDest);
     Files.deleteIfExists(srcDest);
   }
-  public void checkDiff(Path srcDest) throws IOException{
+
+  public void checkDiff(Path srcDest) throws IOException {
     List<String> decompiled = Files.readAllLines(srcDest);
     List<String> expected = Files.readAllLines(expectedRoot.resolve(srcDest.getFileName()));
     Patch patch = DiffUtils.diff(decompiled, expected);
     checkDiff(patch);
   }
-  public void checkDiff(Patch patch){
-    try{
+
+  public void checkDiff(Patch patch) {
+    try {
       assertEquals("has not diff", 0, patch.getDeltas().size());
-    }catch (Throwable e) {
+    } catch (Throwable e) {
       for (Delta delta : patch.getDeltas()) {
-        delta.getOriginal().getLines().forEach(x->System.out.println("+"+x));
-        delta.getRevised().getLines().forEach(x->System.out.println("-"+x));
+        delta.getOriginal().getLines().forEach(x -> System.out.println("+" + x));
+        delta.getRevised().getLines().forEach(x -> System.out.println("-" + x));
       }
       throw e;
     }

@@ -54,30 +54,33 @@ public class ProxyTest {
     };
     Example foo = (Example) c.newInstance();
     ((ProxyObject) foo).setHandler(methodHandler);
-    /** # below comments are printed when next statement invoked
-     *  # In private method, method handler is not invoked; 
-     *    start:test
-     *   private method called
-     *     start:protectedMethod
-     *   protected method called
-     *     end:protectedMethod
-     *   test called
-     *    end:test
+    /**
+     * # below comments are printed when next statement invoked
+     * # In private method, method handler is not invoked;
+     * start:test
+     * private method called
+     * start:protectedMethod
+     * protected method called
+     * end:protectedMethod
+     * test called
+     * end:test
      */
     foo.test();
   }
-  
+
   /**
    * めちゃシンプルなケース
-   * @throws NotFoundException 
-   * @throws ClassNotFoundException 
+   * 
+   * @throws NotFoundException
+   * @throws ClassNotFoundException
    */
   @Test
-  public void testSimpleCreate() throws NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, NotFoundException, ClassNotFoundException{
+  public void testSimpleCreate() throws NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
+      InvocationTargetException, NotFoundException, ClassNotFoundException {
     ClassPool.getDefault();
-    ProxyFactory factory=new ProxyFactory();
+    ProxyFactory factory = new ProxyFactory();
     factory.setSuperclass(Example.class);
-    Example example=(Example) factory.create(new Class[0],new Object[0], (self,m,p,args)->{
+    Example example = (Example) factory.create(new Class[0], new Object[0], (self, m, p, args) -> {
       System.out.println(m);
       return p.invoke(self, args);
     });
