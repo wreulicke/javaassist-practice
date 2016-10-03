@@ -1,4 +1,4 @@
-package wreulicke.test;
+package wreulicke.test.application;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 

@@ -1,4 +1,4 @@
-package wreulicke.test;
+package wreulicke.test.application;
 
 import java.util.concurrent.ExecutorService;
 
