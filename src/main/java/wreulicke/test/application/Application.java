@@ -50,7 +50,6 @@ public class Application {
       xxx.ifPresent(s -> {
         s.apply("test content")
           .whenCompleteAsync((a, b) -> {
-            System.out.println("xxxx");
             try {
               if (b != null) {
                 throw b;
