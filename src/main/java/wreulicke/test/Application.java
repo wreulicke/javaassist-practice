@@ -2,20 +2,32 @@ package wreulicke.test;
 
 import java.util.concurrent.ExecutorService;
 
-import org.glassfish.grizzly.http.server.HttpHandler;
+import javax.inject.Inject;
+
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
-import org.glassfish.grizzly.http.server.Request;
-import org.glassfish.grizzly.http.server.Response;
-import org.glassfish.grizzly.threadpool.GrizzlyExecutorService;
-import org.glassfish.grizzly.threadpool.ThreadPoolConfig;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class Application {
+  
   public static void main(String[] args) {
-    ExecutorService service = GrizzlyExecutorService
-        .createInstance(ThreadPoolConfig.defaultConfig().copy().setCorePoolSize(5).setMaxPoolSize(10));
-    HttpServer server = new HttpServer();
+    String context="/test"; 
+    int port=8080;
+    Injector injector=Guice.createInjector(new ApplicationModule());
+    injector.getInstance(Application.class).start(context, port);
+  }
+  
+  @Inject
+  private HttpServer server;
+  
+  @Inject
+  private ExecutorService service;
+  
+  public void start(String context){
     Handler handler = (request, response) -> {
+      String uri=request.getRequestURI().substring(context.length());
       response.setContentType("text/plain");
       response.getWriter().write("xxx:"+request.getRequestURI());
     };
@@ -31,43 +43,22 @@ public class Application {
         }
       };
       service.submit(task.get());
-    };
-    server.addListener(new NetworkListener("grizzly", "0.0.0.0", 8080));
-    server.getServerConfiguration().addHttpHandler(handler.get(), "/test");
+    }; 
+    server.getServerConfiguration().addHttpHandler(handler.get(), context);
     server.getServerConfiguration().addHttpHandler(handler2.get());
+  }
+  
+  public void start(String context, int port){
+    server.addListener(new NetworkListener("grizzly", "0.0.0.0", port));
+    start(context);
     try {
       server.start();
       System.in.read();
     } catch (Exception e) {
       e.printStackTrace();
+    }finally {
+      server.shutdown();
     }
     
-  }
-
-  public static interface Task {
-    void run() throws Exception;
-
-    default Runnable get() {
-      return () -> {
-        try {
-          run();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      };
-    }
-  }
-
-  public static interface Handler {
-    void handle(Request request, Response response) throws Exception;
-
-    default HttpHandler get() {
-      return new HttpHandler() {
-        @Override
-        public void service(Request request, Response response) throws Exception {
-          handle(request, response);
-        }
-      };
-    }
   }
 }
